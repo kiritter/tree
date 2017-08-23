@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Example : Tree</title>
+<meta name="description" content="An Example of JavaScript" />
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Droid+Sans" rel="stylesheet">
+<link href="index.css" rel="stylesheet">
+
+<style>
+	.content {
+		vertical-align: top;
+	}
+
+	.note {
+		margin-top: 0;
+		margin-bottom: 0;
+		font-size: 12px;
+	}
+
+	.json-area {
+		display: inline-block;
+		vertical-align: top;
+		width: 440px;
+	}
+	.button-area {
+		display: inline-block;
+		vertical-align: top;
+		width: 170px;
+	}
+	.tree-area {
+		display: inline-block;
+		vertical-align: top;
+		width: 280px;
+	}
+
+	.json {
+		font-family: 'Roboto Mono', monospace;
+		font-size: 11px;
+		min-width: 420px;
+		min-height: 420px;
+	}
+	.tree {
+		font-family: 'Roboto Mono', monospace;
+		font-size: 12px;
+		min-width: 260px;
+		min-height: 400px;
+		padding: 10px;
+		border: solid 1px #aaa;
+		margin: 0;
+	}
+
+	.button {
+		margin-bottom: 10px;
+	}
+	.large {
+		width: 150px;
+		height: 50px;
+		font-weight: bold;
+		font-size: 17pt;
+	}
+
+	.sum {
+		color: green;
+	}
+
+</style>
+
+<script>
+	//--------------------------------------------------
+	function convToTree() {
+		var jsonText = '[' + $('.json').val() + ']';
+
+		var records;
+		try {
+			records = JSON.parse(jsonText);
+		} catch (e) {
+			alert('入力内容に誤りがあります！\n[' + e + ']');
+			return;
+		}
+
+		if (records.length > 100) {
+			alert('サンプルなので、件数控えめで。');
+			return;
+		}
+
+		var itemManager = new ItemManager();
+		itemManager.buildComposite(records);
+
+		var text = itemManager.getTreeString();
+		var sum = itemManager.getWeightSum();
+
+		showResult(text, sum);
+	}
+
+
+	function showResult(text, sum) {
+		var result = text + '\n';
+
+		var sumText = (sum > 0) ? '<span class="sum">合計[' + sum + ']g</span>' : '';
+		result += sumText;
+
+		//$('.tree').text(result);
+		$('.tree').html(result);
+	}
+
+	//--------------------------------------------------
+</script>
+</head>
+
+<body>
+<div id="main">
+	<div id="memo">
+		<dl class="cf">
+			<dt>GitHub Code</dt>
+			<dd><a target="_blank" href="https://github.com/kirishimapublic/tree/">https://github.com/kirishimapublic/tree/</a></dd>
+		</dl>
+	</div>
+	<div id="content">
+		<div class="memo-area">
+			<div>
+				<p class="note">↓DBのレコードのイメージで（各部品は親の部品のnameを持つ階層構造）、１部品を１オブジェクトとしてJSONで表現</p>
+				<p class="note">　root（parentNameが '-' のモノ）を１つだけ用意する（※Tree表示の際、未ソート、数値チェックもナシ）</p>
+			</div>
+		</div>
+		<div class="json-area">
+			<div>
+				<textarea class="json">
+  {"name":"root", "parentName":"-", "weight":"0"}
+, {"name":"部品A", "parentName":"root", "weight":"10"}
+, {"name":"部品A-1", "parentName":"部品A", "weight":"20"}
+, {"name":"部品A-1-a", "parentName":"部品A-1", "weight":"101"}
+, {"name":"部品A-1-b", "parentName":"部品A-1", "weight":"102"}
+, {"name":"部品A-2", "parentName":"部品A", "weight":"30"}
+, {"name":"部品A-2-a", "parentName":"部品A-2", "weight":"103"}
+, {"name":"部品A-2-b", "parentName":"部品A-2", "weight":"104"}
+, {"name":"部品B", "parentName":"root", "weight":"20"}
+, {"name":"部品B-1", "parentName":"部品B", "weight":"40"}
+, {"name":"部品B-1-a", "parentName":"部品B-1", "weight":"201"}
+, {"name":"部品B-1-b", "parentName":"部品B-1", "weight":"202"}
+, {"name":"部品B-2", "parentName":"部品B", "weight":"50"}
+, {"name":"部品B-2-a", "parentName":"部品B-2", "weight":"203"}
+, {"name":"部品B-2-b", "parentName":"部品B-2", "weight":"204"}
+, {"name":"部品C-2", "parentName":"部品C", "weight":"60"}
+, {"name":"部品C-1", "parentName":"部品C", "weight":"70"}
+, {"name":"部品C", "parentName":"root", "weight":"30"}
+</textarea>
+			</div>
+		</div>
+		<div class="button-area">
+			<div>
+				<input type="button" class="button large" value="→Tree表示" onclick="convToTree();">
+			</div>
+		</div>
+		<div class="tree-area">
+			<div>
+				<pre class="tree"></pre>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="jquery-3.2.1.min.js"></script>
+<script src="tree.js"></script>
+</body>
+</html>
